@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>マッチョの語り場</title>
+<style>
+    #chatlog{ width:500px; height:300px; border:1px solid gray; overflow-y:scroll; }
+    #uname{ width:150px; float:left; margin-right:10px; padding-top:5px; text-align:center}
+    #msg{ width:330px; height:30px; margin-right:10px; font-size:12pt;}
+    #sbmt{ width:100px; height:30px; }
+  </style>
+</head>
+<body>
+
+<!-- コンテンツ表示画面 -->
+
+<h1>マッチョの語り場</h1>
+
+  <!-- 入力フォーム -->
+
+    <div>
+        名前:
+        <br>
+        <input type="text" id="uname"cols="30" rows="10"></input>
+    </div>
+
+    <div>
+        チャット
+        <br>
+        <input type="text" id="text" cols="30" rows="10"></input>
+        <button id="send">送信</button>
+    </div>
+ 
+
+
+  <!-- 発言が表示される領域 -->
+  <ul id="chatlog"></ul>
+
+<div>
+   
+    <!-- <div>
+        <textarea id="text" cols="30" rows="10"></textarea>
+        <button id="send">送信</button>
+    </div>
+    <div id="output"></div> -->
+</div>
+<!--/ コンテンツ表示画面 -->
+
+
+
+<!-- JQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!-- JQuery -->
+
+ <!--** 以下Firebase **-->
+ <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js";
+    import {
+      getDatabase,
+      ref,
+      push,
+      set,
+      onChildAdded,
+      remove,
+      onChildRemoved,
+    } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-database.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+    apiKey: "AIzaSyAWxrMeFmUq_W3oHWBtl8Yq35yWk2FQ0P8",
+    authDomain: "othello-bd15b.firebaseapp.com",
+    databaseURL: "https://othello-bd15b-default-rtdb.firebaseio.com",
+    projectId: "othello-bd15b",
+    storageBucket: "othello-bd15b.appspot.com",
+    messagingSenderId: "293403770318",
+    appId: "1:293403770318:web:89bedf757199d46f213f9f"
+  };
+
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getDatabase(app); //RealtimeDBに接続
+    const dbRef = ref(db,"chat"); //RealtimeDB内の"chat"を使う
+
+    //送信のボタンが押されたらデータを登録する処理を書きます
+
+    $("#send").on("click",function(){
+    //   alert("aa");
+    const uname = $("#uname").val();
+    const text = $("#text").val();
+    
+    console.log(uname,"名前");
+    console.log(text,"テキスト");
+
+    //データの塊を作成
+
+    const msg = {
+        uname: uname,
+        text: text,
+    };
+
+    const newPostRef = push(dbRef);
+    set(newPostRef, msg);
+
+    //入力欄を空にする方法
+
+    $("uname").val("");
+    $("text").val("");  
+
+    });
+
+     // 受信処理を記述します
+
+     onChildAdded(dbRef, function(data){
+        const msg = data.val();
+        console.log(msg,"dataを取得");
+
+        let html = `
+            <p>${msg.uname}</p>
+            <p>${msg.text}</p>
+          `;
+
+        $("#chatlog").append(html);
+    })
+
+    var uname = getUName();
+    document.getElementById("uname").innerHTML = uname;
+
+    function getUName(){
+      let master = ["プロテインくん", "腹筋ボーイ", "Mr.ゴールドジム", "きんにくん", "シュワちゃん"];
+      let i      = Math.floor( Math.random() * master.length );
+      return( master[i] );
+    }
+
+
+  </script>
+
+
+
+
+<!--** 以下Firebase **-->
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
